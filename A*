@@ -1,0 +1,281 @@
+import copy
+SS=[[2,3,0],[1,8,5],[7,6,4]]
+FS=[[1,2,3],[8,0,5],[7,6,4]]
+FF=SS.copy()
+h=[7]
+g=[1]
+Q=[SS]
+Q2=[SS]
+def find_position(z):
+    for i in range(3):
+        for j in range(3):
+            if(z[i][j]==0):
+                return i, j
+
+def printn(m):
+    for c in m:
+        print(*c)
+print(f"Starting Node---")
+printn(SS)
+print()
+
+def left(n,i,j):
+    change=[]
+    change = copy.deepcopy(n)   
+    if(i>=0 and i<=2 and j>0 and j<=2 ):
+        t=change[i][j]
+        change[i][j]=change[i][j-1]
+        change[i][j-1]=t
+        return change
+    else:
+        return None
+
+def right(n,i,j):
+    change=[]
+    
+    change = copy.deepcopy(n)   
+    if(i>=0 and i<=2 and j>=0 and j<2):
+        t=change[i][j]
+        change[i][j]=change[i][j+1]
+        change[i][j+1]=t
+        return change
+    else: 
+        return None
+
+def up(n,i,j):
+    change=[]
+    
+    change = copy.deepcopy(n)   
+    if(i>0 and i<=2 and j>=0 and j<=2):
+        t=change[i][j]
+        change[i][j]=change[i-1][j]
+        change[i-1][j]=t
+        return change
+    else: 
+        return None
+
+def down(n,i,j):
+    change=[]
+    change = copy.deepcopy(n)   
+    if(i>=0 and i<2 and j>=0 and j<=2 ):
+        t=change[i][j]
+        change[i][j]=change[i+1][j]
+        change[i+1][j]=t
+        return change
+    else:
+        return None
+
+def missplaced(z):
+    missplacednumber=0
+    for zz in range(3):
+        for ff in range(3):
+            if(z[zz][ff]==FS[zz][ff] or z[zz][ff]==0):
+                missplacednumber=missplacednumber
+            else:
+                missplacednumber=missplacednumber+1
+    return missplacednumber
+           
+
+level=1
+while Q:
+    
+    indx=h.index(min(h))
+    h.pop(indx)
+    print(indx)
+    h_value=g.pop(indx)
+    print(f"--------------{h_value}--------------")
+    top=Q.pop(indx)
+    i,j=find_position(top)
+    l=left(top,i,j)
+    r=right(top,i,j)
+    u=up(top,i,j)
+    d=down(top,i,j)
+    ln=100000
+    rn=100001
+    dn=100002
+    un=100003
+    if (l!=None and l not in Q2):
+        ln=missplaced(l)+h_value
+        print(f"ln  {ln}")
+    if(r!=None and r not in Q2):
+        rn=missplaced(r)+h_value
+        print(f"rn  {rn}")
+    if(u!=None and u not in Q2):    
+        un=missplaced(u)+h_value
+        print(f"un  {un}")
+    if(d!=None and d not in Q2):
+        dn=missplaced(d)+h_value
+        print(f"dn  {dn}")
+   
+    if(ln<rn and ln<un and ln<dn and l!=None):
+        Q.append(l)
+        Q2.append(l)
+        h.append(ln)
+        g.append(h_value+1)
+        print("Left--------")
+        printn(l)
+        level=level+1
+        if(l==FS):
+            print(f"Find at level=={h_value}")
+            break
+    elif(rn<ln and rn<un and rn<dn and r!=None):
+        Q.append(r)
+        Q2.append(r)
+        h.append(rn)
+        g.append(h_value+1)
+        print("Right--------")
+        printn(r)
+        level=level+1
+        if(r==FS):
+            print(f"Find at level=={h_value}")
+            break
+    elif(dn<rn and dn<un and dn<ln and d!=None):
+        Q.append(d)
+        Q2.append(d)
+        h.append(dn)
+        g.append(h_value+1)
+        print("Down--------")
+        printn(d)
+        level=level+1
+        if(d==FS):
+            print(f"Find at level=={h_value}")
+            break
+    elif(un<ln and un<rn and un<dn and  u!=None):
+        Q.append(u)
+        Q2.append(u)
+        h.append(un)
+        g.append(h_value+1)
+        print("Up--------")
+        printn(u)
+        level=level+1
+        if(u==FS):
+            print(f"Find at level=={h_value}")
+            break
+    elif (ln==rn):
+        if (l!=None):
+            Q.append(l)
+            Q2.append(l)
+            h.append(ln)
+            g.append(h_value+1)
+            print("Left--------")
+            printn(l)
+            if(l==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(r!=None):
+            Q.append(r)
+            Q2.append(r)
+            h.append(rn)
+            g.append(h_value+1)
+            print("Right--------")
+            printn(r)
+            if(r==FS):
+                print(f"Find at level=={h_value}")
+                break
+    elif(ln==dn):
+        if (l!=None):
+            Q.append(l)
+            Q2.append(l)
+            h.append(ln)
+            g.append(h_value+1)
+            print("Left--------")
+            printn(l)
+            if(l==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(d!=None):
+            Q.append(d)
+            Q2.append(d)
+            h.append(dn)
+            g.append(h_value+1)
+            print("Down--------")
+            printn(d)
+            if(d==FS):
+                print(f"Find at level=={h_value}")
+                break
+    elif (ln==un):
+        if (l!=None):
+            Q.append(l)
+            Q2.append(l)
+            h.append(ln)
+            g.append(h_value+1)
+            print("Left--------")
+            printn(l)
+            if(l==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(u!=None):
+            Q.append(u)
+            Q2.append(u)
+            h.append(un)
+            g.append(h_value+1)
+            print("Up--------")
+            printn(u)
+            if(u==FS):
+                print(f"Find at level=={h_value}")
+                break
+    elif(rn==dn):
+        if (r!=None):
+            Q.append(r)
+            Q2.append(r)
+            h.append(rn)
+            g.append(h_value+1)
+            print("Right--------")
+            printn(r)
+            if(r==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(d!=None):
+            Q.append(d)
+            h.append(dn)
+            Q2.append(d)
+            g.append(h_value+1)
+            print("Down--------")
+            printn(d)
+            if(d==FS):
+                print(f"Find at level=={h_value}")
+                break
+    elif(rn==un):
+        if (r!=None):
+            Q.append(r)
+            Q2.append(r)
+            h.append(rn)
+            g.append(h_value+1)
+            print("Right--------")
+            printn(r)
+            if(r==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(u!=None):
+            Q.append(u)
+            h.append(un)
+            Q2.append(u)
+            g.append(h_value+1)
+            print("Up--------")
+            printn(u)
+            if(u==FS):
+                print(f"Find at level=={h_value}")
+                break
+    elif(un==dn):
+        if (u!=None):
+            Q.append(u)
+            Q2.append(u)
+            h.append(un)
+            g.append(h_value+1)
+            print("Up--------")
+            printn(u)
+            if(u==FS):
+                print(f"Find at level=={h_value}")
+                break
+        if(d!=None):
+            Q.append(d)
+            Q2.append(d)
+            h.append(dn)
+            g.append(h_value+1)
+            print("Down--------")
+            printn(d)
+            if(d==FS):
+                print(f"Find at level=={h_value}")
+                break
+
+                
